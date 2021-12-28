@@ -89,6 +89,19 @@ export interface GeckoApiClient {
    */
   exchanges: ExchangesUrlObject;
   /**
+   * Finance Endpoint - https://www.coingecko.com/api/documentations/v3#/finance
+   * `/finance/...`
+   */
+  finance: FinanceUrlObject;
+  /**
+   * Indexes endpoint  - `/indexes/...`
+   */
+  indexes: IndexesUrlObject;
+  /**
+   * Derivatives - `/derivatives/...`
+   */
+  derivatives: DerivativesUrlObject;
+  /**
    * Private method to make a request to the API
    */
   _request: (path: string, params?: QueryParams) => Promise<void | Response>;
@@ -328,7 +341,7 @@ export interface FinanceUrlObject {
    *  pass optional params:
    * `per_page` - number of items per page
    * `page` - page number
-   * `default to 100 and 1`
+   * `defaults to 100 and 1`
    */
   platforms: (params?: {
     per_page?: number;
@@ -359,6 +372,7 @@ export interface IndexesUrlObject {
   /**
    *  @description
    * List all market indexes.
+   * default params: 100 and 1
    */
   all: (params?: {
     per_page?: number;
@@ -374,6 +388,8 @@ export interface IndexesUrlObject {
   /**
    *  @description
    * Get market index by market id and index id
+   * pass the market id (can be obtained from /exchanges/list)
+   * pass the index id (can be obtained from /indexes/list)
    */
   fetchIndex: (marketId: string, id: string) => Promise<void | Response>;
 }
