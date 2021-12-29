@@ -1,3 +1,7 @@
+/**
+ * @author Vincent Arlou
+ * This file contains the interfaces used to specify parameters for the API calls.
+ */
 import {
   QueryParams,
   RequestOptions,
