@@ -128,6 +128,7 @@ export interface CoinsUrlObject {
   /**
    * @description
    * list all supported coins id, name and symbol
+   * @returns Object
    */
   list: () => Promise<void | Response>;
   /**

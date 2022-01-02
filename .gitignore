@@ -2,6 +2,9 @@
 ./wasm_lang_detect
 .wasm_lang_detect
 
+#
+/src/test.ts
+
 # Logs
 logs
 *.log

@@ -10,7 +10,7 @@ const HOST = "api.coingecko.com";
 const API_VERSION = "3";
 const URI = `${BASE}v${API_VERSION}`;
 const REQUESTS_PER_SECOND = 10;
-const TIMEOUT = 30000;
+const TIMEOUT = 3000;
 
 const ORDER: Order = {
   GECKO_ASC: "gecko_asc",

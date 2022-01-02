@@ -33,7 +33,7 @@ import type {
   EventType,
 } from "../types/types.ts";
 
-class Client implements GeckoApiClient {
+class GeckoClient implements GeckoApiClient {
   readonly ORDER: Order = Constants.ORDER;
   readonly API_VERSION: string = Constants.API_VERSION;
   readonly EVENT_TYPE: EventType = Constants.EVENT_TYPE;
@@ -634,14 +634,22 @@ class Client implements GeckoApiClient {
   /**
    * This function is not indented to be used by the user, ideally should be private
    */
-  _request(path: string, params?: QueryParams): Promise<void | Response> {
+  _request(path: string, params?: QueryParams): Promise<Response> {
     const { resource, init } = this._buildRequestParams(path, params);
 
-    return fetch(resource, init).then(async (response) => {
+    // set an abort controller, default is 3000ms
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), this.TIMEOUT);
+
+    return fetch(resource, {
+      ...init,
+      signal: controller.signal,
+    }).then(async (response) => {
       // Don't really like how I wrote this, work on it later
       const data = await response.json();
 
       if (response.ok) {
+        clearTimeout(timeout);
         return data;
       } else {
         return Promise.reject(data);
@@ -650,4 +658,4 @@ class Client implements GeckoApiClient {
   }
 }
 
-export default Client;
+export default GeckoClient;
