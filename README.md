@@ -1,6 +1,6 @@
 <div align="center">
  <h1>Coin Gecko API Client for Deno</h1>
- <h2>v0.2.0</h2>
+ <h2>v0.2.1</h2>
 </div>
 
 <p align="center">
