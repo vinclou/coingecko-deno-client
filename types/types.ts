@@ -6,7 +6,7 @@ type RequestOptions = {
   init: RequestInit;
 };
 
-type AllQueryParams = {
+type AllCoinsQueryParams = {
   order?: string;
   limit?: number; // limit results per page
   page?: number;
@@ -147,7 +147,7 @@ type SimpleTokenPriceParams = {
   /**
    * The id of the platform issuing tokens(See asset_platforms endpoint for list of options)
    */
-  id: string; // required
+  // id: string; // required
   contract_addresses: Array<string> | string; // required
   vs_currencies: Array<string> | string; // required
   include_market_cap?: boolean; // default false
@@ -220,7 +220,7 @@ type EventType = {
 export type {
   QueryParams,
   RequestOptions,
-  AllQueryParams,
+  AllCoinsQueryParams,
   StatusUpdatesParams,
   MarketsQueryParams,
   CoinQueryParams,
