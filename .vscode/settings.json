@@ -5,6 +5,5 @@
   "deno.codeLens.referencesAllFunctions": true,
   "deno.lint": true,
   "deno.internalDebug": true,
-  "deno.suggest.completeFunctionCalls": true,
-  "cSpell.words": ["Ohlc"]
+  "deno.suggest.completeFunctionCalls": true
 }
