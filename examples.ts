@@ -2,8 +2,8 @@
 	Please do not run this file directly.
   Take snippets from it.
 */
-// import GeckoClient from "https://deno.land/x/coingecko_deno_client@v0.1.0/src/crypto-client.ts";
-import GeckoClient from "./mod.ts";
+import GeckoClient from "https://deno.land/x/coingecko_deno_client@v0.2.0/mod.ts";
+// import GeckoClient from "./mod.ts";
 
 async function test() {
   const client = new GeckoClient();
