@@ -89,7 +89,7 @@ They strictly coincide with the API docs except for contracts it holds `asset_pl
 
 ---
 
-## • Constants
+## Constants
 
 This module provides helper constants for use in calls.
 
