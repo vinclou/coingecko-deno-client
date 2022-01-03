@@ -16,23 +16,55 @@ import {
 import type {
   QueryParams,
   RequestOptions,
-  AllQueryParams,
   StatusUpdatesParams,
-  MarketsQueryParams,
-  CoinQueryParams,
-  TickersQueryParams,
-  FetchHistoryParams,
-  FetchMarketChartParams,
-  FetchMarketChartRangeParams,
-  FetchStatusUpdatesProps,
-  SimplePriceParams,
-  SimpleTokenPriceParams,
   Order,
   StatusUpdateCategoryType,
   StatusUpdateProjectType,
   EventType,
 } from "../types/types.ts";
 
+import type {
+  PingResponse,
+  GlobalResponse,
+  GlobalDefiResponse,
+  CoinStatusUpdateResponse,
+  ExchangeRatesResponse,
+  TrendingResponse,
+  TopHoldingsResponse,
+} from "../types/gecko-data-interfaces.ts";
+
+/**
+ * @description
+ * GeckoApiClient class
+ * @example
+ * ```const client = new GeckoClient()```
+ * @see https://www.coingecko.com/api/documentations/v3
+ * @functions
+ * - `ping()`
+ * - `global()`
+ * - `globalDefi()`
+ * - `listStatusUpdates()`
+ * - `exchangeRates()`
+ * - `trending()`
+ * - `topHoldings()`
+ * @methods
+ * - `get simple`
+ * - `get coins`
+ * - `get contracts`
+ * - `get categories`
+ * - `get exchanges`
+ * - `get finance`
+ * - `get indexes`
+ * - `get derivatives`
+ * @readonly constants(for now, some will be implemented in the constructor)
+ * - `Order`
+ * - `API_VERSION`
+ * - `EVENT_TYPE`
+ * - `REQUESTS_PER_SECOND`
+ * - `STATUS_UPDATE_CATEGORY`
+ * - `STATUS_UPDATE_PROJECT_TYPE`
+ * - `TIMEOUT`
+ */
 class GeckoClient implements GeckoApiClient {
   readonly ORDER: Order = Constants.ORDER;
   readonly API_VERSION: string = Constants.API_VERSION;
@@ -44,66 +76,50 @@ class GeckoClient implements GeckoApiClient {
     Constants.STATUS_UPDATE_PROJECT_TYPE;
   readonly TIMEOUT: number = Constants.TIMEOUT;
 
-  /**
-   * Pings Gecko server to check if it is alive.
-   */
-  ping(): Promise<void | Response> {
+  ping(): Promise<PingResponse> {
     const path = `/ping`;
 
     return this._request(path);
   }
-  /**
-   * `/global` read the api docs for more info
-   * Get cryptocurrency global data
-   */
-  global(): Promise<void | Response> {
+
+  global(): Promise<GlobalResponse> {
     const path = `/global`;
 
     return this._request(path, {});
   }
-  /**
-   * `/global/decentralized_finance_defi`
-   * Get Top 100 Cryptocurrency Global Decentralized Finance(defi) data
-   */
-  globalDefi(): Promise<void | Response> {
+
+  globalDefi(): Promise<GlobalDefiResponse> {
     const path = `/global/decentralized_finance_defi`;
 
     return this._request(path);
   }
-  /**
-   * `/status_updates`
-   * Default behavior is unknown, sorted by coin gecko itself,
-   * I do not to plan to change it, if you want specific order,
-   * provide the params, for more look at ts doc or official docs.
-   */
-  listStatusUpdates(params = {}): Promise<void | Response> {
+
+  listStatusUpdates(
+    params: StatusUpdatesParams = {}
+  ): Promise<CoinStatusUpdateResponse> {
     const path = `/status_updates`;
 
     return this._request(path, params);
   }
-  /**
-   * `/exchange_rates`
-   * Get the exchange rates for all supported currencies
-   * Relative to BTC
-   */
-  exchangeRates(): Promise<void | Response> {
+
+  exchangeRates(): Promise<ExchangeRatesResponse> {
     const path = `/exchange_rates`;
 
     return this._request(path);
   }
 
-  trending(): Promise<void | Response> {
+  trending(): Promise<TrendingResponse> {
     const path = `/search/trending`;
 
     return this._request(path);
   }
 
-  topHoldings(coinId = "bitcoin") {
+  topHoldings(coinId = "bitcoin"): Promise<TopHoldingsResponse> {
     const path = `/companies/public_treasury/${coinId}`;
 
     return this._request(path);
   }
-  // TODO: Refactor
+
   public get simple(): SimpleUrlObject {
     return {
       /* Actually bad design, should not really provide default values for it, ids */
@@ -113,6 +129,7 @@ class GeckoClient implements GeckoApiClient {
           vs_currencies: "",
         }
       ) => {
+        const path = `/simple/price`;
         // Must be object
         if (!Utils.isObject(params))
           Promise.reject(`Invalid parameter, params must be of type: Object`);
@@ -146,13 +163,14 @@ class GeckoClient implements GeckoApiClient {
             `Invalid parameter, params.ids must be of type: String or Array and greater than 0 characters.`
           );
 
-        const path = `/simple/price`;
-
         return this._request(path, params);
       },
+      /*
+
+      */
       tokenPrice: (
         params = {
-          id: "",
+          // id: "",
           contract_addresses: "",
           vs_currencies: "",
         },
@@ -201,7 +219,7 @@ class GeckoClient implements GeckoApiClient {
       },
     };
   }
-  // TODO: Go over code and fix it, possibly add types to be able skimming through the them
+
   public get coins(): CoinsUrlObject {
     const pathPrefix = `coins`;
 
@@ -214,11 +232,11 @@ class GeckoClient implements GeckoApiClient {
       list: () => {
         const path = `/${pathPrefix}/list`;
 
-        return this._request(path);
+        return this._request(path, { include_platform: true });
       },
       markets: (
         params = {
-          vs_currency: "",
+          vs_currency: "usd",
         }
       ) => {
         const path = `/${pathPrefix}/markets`;
@@ -230,10 +248,7 @@ class GeckoClient implements GeckoApiClient {
           );
 
         //If no params.vs_currency, set to default: 'usd'
-        if (
-          !Utils.isString(params["vsCurrency"]) ||
-          Utils.isStringEmpty(params["vsCurrency"])
-        ) {
+        if (Utils.isStringEmpty(params["vsCurrency"])) {
           params.vsCurrency = "usd";
         }
 
@@ -386,7 +401,7 @@ class GeckoClient implements GeckoApiClient {
       },
     };
   }
-  // TODO: Add all the methods
+
   public get contracts(): ContractsUrlObject {
     const pathPrefix = "coins";
 
@@ -396,7 +411,7 @@ class GeckoClient implements GeckoApiClient {
 
         return this._request(path);
       },
-      contract: (coinId, contract_address) => {
+      fetchContract: (coinId, contract_address) => {
         if (!Utils.isString(coinId) || Utils.isStringEmpty(coinId))
           return Promise.reject(
             "Invalid parameter: coinId must be of type: String and greater than 0 characters."
@@ -413,12 +428,66 @@ class GeckoClient implements GeckoApiClient {
 
         return this._request(path);
       },
-      // contractHistory: (coinId, )
+      // Look these if statement checks look silly, maybe get rid of them?
+      fetchContractMarketChart: (
+        id,
+        contract_address,
+        params = {
+          vs_currency: "usd",
+          days: "max",
+        }
+      ) => {
+        const path = `/${pathPrefix}/${id}/contract/${contract_address}/market_chart/`;
+
+        if (!Utils.isString(id) || Utils.isStringEmpty(id))
+          return Promise.reject(
+            "Invalid parameter: id must be of type: String and greater than 0 characters."
+          );
+        if (
+          !Utils.isString(contract_address) ||
+          Utils.isStringEmpty(contract_address)
+        )
+          return Promise.reject(
+            "Invalid parameter: contract_address must be of type: String and greater than 0 characters."
+          );
+
+        return this._request(path, params);
+      },
+      // Look these if statement checks look silly, maybe get rid of them?
+      fetchContractMarketChartRange: (
+        id,
+        contract_address,
+        params = {
+          vs_currency: "",
+          from: -1,
+          to: -1,
+        }
+      ) => {
+        const path = `/${pathPrefix}/${id}/contract/${contract_address}/market_chart/range/`;
+
+        if (!Utils.isString(id) || Utils.isStringEmpty(id))
+          return Promise.reject(
+            "Invalid parameter: id must be of type: String and greater than 0 characters."
+          );
+        if (
+          !Utils.isString(contract_address) ||
+          Utils.isStringEmpty(contract_address)
+        )
+          return Promise.reject(
+            "Invalid parameter: contract_address must be of type: String and greater than 0 characters."
+          );
+
+        if (params.from === -1 || params.to === -1)
+          return Promise.reject("Invalid Parameter: Empty from or to params.");
+
+        if (Utils.isStringEmpty(params.vs_currency))
+          return Promise.reject("Invalid Parameter: Empty vs_currency param.");
+
+        return this._request(path, params);
+      },
     };
   }
-  /*
-    /coins/categories/list
-  */
+
   public get categories(): CategoriesUrlObject {
     const pathPrefix = "coins/categories";
 
@@ -437,9 +506,7 @@ class GeckoClient implements GeckoApiClient {
       },
     };
   }
-  /*
-    /exchanges/...
-  */
+
   public get exchanges(): ExchangesUrlObject {
     const pathPrefix = "exchanges";
 
@@ -502,10 +569,7 @@ class GeckoClient implements GeckoApiClient {
       },
     };
   }
-  /*
-    TODO Add finance, indexes, derivatives routes
-    /finance
-  */
+
   public get finance(): FinanceUrlObject {
     return {
       platforms: (
@@ -633,8 +697,13 @@ class GeckoClient implements GeckoApiClient {
 
   /**
    * This function is not indented to be used by the user, ideally should be private
+   * TODO:
+   * 1. Add refetching logic
+   * 2. Add max cap on the number of requests
+   * 3. Fix the type, currently returns Promise<any>, but better to return Promise<T>, something wrong with deno
    */
-  _request(path: string, params?: QueryParams): Promise<Response> {
+  // deno-lint-ignore no-explicit-any
+  _request(path: string, params?: QueryParams): Promise<any> {
     const { resource, init } = this._buildRequestParams(path, params);
 
     // set an abort controller, default is 3000ms
