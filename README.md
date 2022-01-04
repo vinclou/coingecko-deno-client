@@ -1,6 +1,6 @@
 <div align="center">
  <h1>Coin Gecko API Client for Deno</h1>
- <h2>v0.2.1</h2>
+ <h2>v0.2.2</h2>
 </div>
 
 <p align="center">
@@ -43,7 +43,7 @@ small library needs any.
 //1. Import coingecko-api
 //Make sure you use the latest version of the library it can be specified in the url.
 //It's just a note in case I ever forget to update it in this section of readme
-import Client from "https://deno.land/x/coingecko_deno_client@v0.2.0/mod.ts";
+import Client from "https://deno.land/x/coingecko_deno_client@v0.2.2/mod.ts";
 
 //2. Initiate the CoinGecko API Client
 const client = new GeckoClient();

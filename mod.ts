@@ -1,7 +1,11 @@
 // default client for the API
 // import GeckoClient from "./src/crypto-client.ts";
 // export default GeckoClient;
-export * from "./src/crypto-client.ts";
+// export * from "./src/crypto-client.ts";
+export { GeckoClient } from "./src/crypto-client.ts";
+export * from "./types/interfaces.ts";
+export * from "./types/types.ts";
+export * from "./types/gecko-data-interfaces.ts";
 
 // Interfaces for the GeckoClient class
 // export type {
@@ -15,7 +19,7 @@ export * from "./src/crypto-client.ts";
 //   IndexesUrlObject,
 //   DerivativesUrlObject,
 // } from "./types/interfaces.ts";
-export * from "./types/interfaces.ts";
+
 // Types: for QueryParams
 // export type {
 //   QueryParams,
@@ -39,7 +43,7 @@ export * from "./types/interfaces.ts";
 //   EventType,
 //   StatusUpdatesParams,
 // } from "./types/types.ts";
-export * from "./types/types.ts";
+
 // Response Object Data From the Coin Gecko API
 // export type {
 //   PingResponse,
@@ -72,4 +76,3 @@ export * from "./types/types.ts";
 //   Derivative,
 //   DerivativeExchange,
 // } from "./types/gecko-data-interfaces.ts";
-export * from "./types/gecko-data-interfaces.ts";

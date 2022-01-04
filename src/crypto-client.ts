@@ -65,7 +65,7 @@ import type {
  * - `STATUS_UPDATE_PROJECT_TYPE`
  * - `TIMEOUT`
  */
-class GeckoClient implements GeckoApiClient {
+export class GeckoClient implements GeckoApiClient {
   readonly ORDER: Order = Constants.ORDER;
   readonly API_VERSION: string = Constants.API_VERSION;
   readonly EVENT_TYPE: EventType = Constants.EVENT_TYPE;
@@ -726,5 +726,3 @@ class GeckoClient implements GeckoApiClient {
     });
   }
 }
-
-export default GeckoClient;
